@@ -1,2 +1,2 @@
 # NoTube
-NoTube is the OpenSourese video hasting.
+NoTube is the OpenSourese video hosting.
