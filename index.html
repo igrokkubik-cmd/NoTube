@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NotTube</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: white; margin: 0; padding: 16px; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #272727; padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+        .logo { display: flex; align-items: center; cursor: pointer; }
+        .logo img { height: 36px; }
+        
+        .upload-box { background: #1e1e1e; padding: 10px 14px; border-radius: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        input[type="text"] { background: #121212; border: 1px solid #333; color: white; padding: 8px 12px; border-radius: 6px; width: 170px; }
+        button { background: #272727; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; }
+        button:hover { background: #3f3f3f; }
+        button img { width: 18px; height: 18px; }
+        .btn-red { background: #ff0033; }
+        .btn-red:hover { background: #cc0029; }
+        .btn-sub { background: #f1f1f1; color: #0f0f0f; }
+        .btn-sub.active { background: #272727; color: white; }
+
+        #player-section { display: none; max-width: 900px; margin: 0 auto 24px auto; background: #181818; padding: 14px; border-radius: 12px; }
+        #main-player { width: 100%; max-height: 500px; border-radius: 8px; background: black; }
+        .player-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px; }
+
+        .section-title { display: flex; align-items: center; gap: 8px; font-size: 20px; margin: 18px 0 14px 0; }
+        .section-title img { width: 22px; height: 22px; }
+        .shorts-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 14px; border-bottom: 1px solid #272727; }
+        .short-card { width: 160px; flex-shrink: 0; background: #181818; padding: 8px; border-radius: 10px; cursor: pointer; }
+        .short-card video { width: 100%; height: 250px; object-fit: cover; border-radius: 6px; background: black; pointer-events: none; }
+
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+        .video-card { background: #181818; padding: 10px; border-radius: 10px; cursor: pointer; }
+        .video-card:hover { background: #252525; }
+        .video-card video { width: 100%; height: 170px; object-fit: cover; border-radius: 6px; background: black; pointer-events: none; }
+        .video-title { font-weight: bold; margin: 10px 0 4px 0; font-size: 16px; }
+        .video-meta { color: #aaa; font-size: 13px; }
+
+        /* Автоподстройка под телефон */
+        body.is-phone { padding: 10px; }
+        body.is-phone header { flex-direction: column; align-items: stretch; }
+        body.is-phone .upload-box { flex-direction: column; align-items: stretch; width: 100%; }
+        body.is-phone .upload-box input[type="text"] { width: 100%; }
+        body.is-phone .video-grid { grid-template-columns: 1fr; gap: 14px; }
+        body.is-phone .video-card video { height: 210px; }
+        body.is-phone button { padding: 12px 16px; font-size: 15px; }
+        body.is-phone #main-player { max-height: 250px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="location.reload()">
+        <img src="/res/logo.png" onerror="this.style.display='none'">
+    </div>
+    <form class="upload-box" action="/upload" method="POST" enctype="multipart/form-data" onsubmit="saveNick()">
+        <input type="text" name="author" id="nick-input" placeholder="Твой ник..." required>
+        <input type="text" name="title" placeholder="Название ролика..." required>
+        <input type="file" name="videoFile" required>
+        <label style="font-size: 14px; cursor: pointer;">
+            <input type="checkbox" name="isShort"> Short
+        </label>
+        <button type="submit" class="btn-red">Выложить</button>
+    </form>
+</header>
+
+<div id="player-section">
+    <video id="main-player" controls autoplay playsinline></video>
+    <h2 id="player-title" style="margin: 12px 0 4px 0; font-size: 18px;"></h2>
+    <div class="player-controls">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <strong id="player-author">Натурал Альбертович</strong>
+            <button class="btn-sub" id="sub-btn" onclick="toggleSub()">
+                <img src="/res/subscribe.png" onerror="this.style.display='none'">
+                <span id="sub-text">Подписаться</span>
+            </button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button onclick="rate('like')">
+                <img src="/res/like.png" onerror="this.style.display='none'"> <span id="like-num">0</span>
+            </button>
+            <button onclick="rate('dislike')">
+                <img src="/res/dislike.png" onerror="this.style.display='none'"> <span id="dislike-num">0</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="shorts-container" style="display: none;">
+    <div class="section-title">
+        <img src="/res/shorts.png" onerror="this.style.display='none'"> Shorts
+    </div>
+    <div class="shorts-row" id="shorts-grid"></div>
+</div>
+
+<div class="section-title">Все видео</div>
+<div class="video-grid" id="gallery"></div>
+
+<script>
+    let currentVideo = null;
+    let isSubscribed = false;
+
+    // Подставляем последний использованный ник, чтобы не вводить заново
+    const savedNick = localStorage.getItem('nottube_nick');
+    if (savedNick) {
+        document.getElementById('nick-input').value = savedNick;
+    }
+
+    function saveNick() {
+        const nick = document.getElementById('nick-input').value.trim();
+        if (nick) localStorage.setItem('nottube_nick', nick);
+    }
+
+    function detectDevice() {
+        const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        document.body.classList.toggle('is-phone', isMobileDevice);
+    }
+    detectDevice();
+    window.addEventListener('resize', detectDevice);
+
+    function playVideo(video) {
+        currentVideo = video;
+        const section = document.getElementById('player-section');
+        const player = document.getElementById('main-player');
+        
+        section.style.display = 'block';
+        player.src = '/videos/' + video.filename;
+        document.getElementById('player-title').textContent = video.title;
+        document.getElementById('player-author').textContent = video.author || 'Натурал Альбертович';
+        document.getElementById('like-num').textContent = video.likes || 0;
+        document.getElementById('dislike-num').textContent = video.dislikes || 0;
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSub() {
+        isSubscribed = !isSubscribed;
+        const btn = document.getElementById('sub-btn');
+        const text = document.getElementById('sub-text');
+        btn.classList.toggle('active', isSubscribed);
+        text.textContent = isSubscribed ? 'Вы подписаны' : 'Подписаться';
+    }
+
+    function rate(type) {
+        if (!currentVideo) return;
+        fetch('/api/rate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: currentVideo.id, type: type })
+        })
+        .then(res => res.json())
+        .then(updated => {
+            document.getElementById('like-num').textContent = updated.likes || 0;
+            document.getElementById('dislike-num').textContent = updated.dislikes || 0;
+        });
+    }
+
+    fetch('/api/videos')
+        .then(res => res.json())
+        .then(videos => {
+            const gallery = document.getElementById('gallery');
+            const shortsGrid = document.getElementById('shorts-grid');
+            const shortsContainer = document.getElementById('shorts-container');
+
+            const shorts = videos.filter(v => v.isShort);
+            const regular = videos.filter(v => !v.isShort);
+
+            if (shorts.length > 0) {
+                shortsContainer.style.display = 'block';
+                shorts.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'short-card';
+                    card.onclick = () => playVideo(s);
+                    card.innerHTML = `<video src="/videos/${s.filename}#t=1"></video><div class="video-title" style="font-size:14px;">${s.title}</div>`;
+                    shortsGrid.appendChild(card);
+                });
+            }
+
+            if (regular.length === 0 && shorts.length === 0) {
+                gallery.innerHTML = '<p style="color:#888;">Пока нет видео. Положи ролик в папку videos или загрузи сверху!</p>';
+                return;
+            }
+
+            regular.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.onclick = () => playVideo(video);
+                card.innerHTML = `
+                    <video src="/videos/${video.filename}#t=1"></video>
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-meta">${video.author || 'Натурал Альбертович'} • ${video.date}</div>
+                `;
+                gallery.appendChild(card);
+            });
+        });
+</script>
+
+</body>
+</html>
