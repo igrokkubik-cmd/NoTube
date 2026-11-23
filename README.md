@@ -2,6 +2,7 @@
 NoTube is the OpenSourese video hosting. 
 
 To use NoTube go to link in description. 
+Now NoTube is brocken we fixing it... 
 Sometimes we perform technical works and the site may be unavailable. 
 
 RU: Инструкция для копирования 
