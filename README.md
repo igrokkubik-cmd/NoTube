@@ -8,7 +8,7 @@ RU: Инструкция для копирования
 Создайте папки ресурсы, videos, media, data. 
 в data положите файл .lock с паролем (например: 1488). 
 все фото (logo.png , like.png , dislike.png , subscribe.png ) положите в ресурсы. 
-НЕОБХОДИМ NODE JS и библиотеки npm install express multer node-media-server и npm install express multer . 
+НЕОБХОДИМ NODE JS и библиотеки npm install express multer и npm install node-media-server . 
 Далее создаём туннель на tuna.am . 
 в файле tuna.bat пишем адрес нашего туннеля и 
 запускаем start.bat . 
