@@ -2,14 +2,13 @@
 NoTube is the OpenSourese video hosting. 
 
 To use NoTube go to link in description. 
-Now NoTube is brocken we fixing it... 
 Sometimes we perform technical works and the site may be unavailable. 
 
 RU: Инструкция для копирования 
 Создайте папки ресурсы, videos, media, data. 
 в data положите файл .lock с паролем (например: 1488). 
 все фото положите в ресурсы. 
-НЕОБХОДИМ NODE JS. 
+НЕОБХОДИМ NODE JS и библиотеки npm install express multer node-media-server и npm install express multer . 
 Далее создаём туннель на tuna.am . 
 в файле tuna.bat пишем адрес нашего туннеля 
 ИЛИ
