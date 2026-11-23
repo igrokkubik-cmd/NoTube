@@ -10,9 +10,7 @@ RU: Инструкция для копирования
 все фото (logo.png , like.png , dislike.png , subscribe.png ) положите в ресурсы. 
 НЕОБХОДИМ NODE JS и библиотеки npm install express multer node-media-server и npm install express multer . 
 Далее создаём туннель на tuna.am . 
-в файле tuna.bat пишем адрес нашего туннеля 
-ИЛИ
-копируем команду из файла Command но со своим доменом от Tuna. 
+в файле tuna.bat пишем адрес нашего туннеля и 
 запускаем start.bat . 
 ВСЁ теперь вы можете спокойно редактировать файлы видео хостинга. 
 
