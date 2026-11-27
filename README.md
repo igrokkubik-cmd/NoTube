@@ -7,7 +7,7 @@ Sometimes we perform technical works and the site may be unavailable.
 RU: Инструкция для копирования 
 Создайте папки ресурсы, videos, media, data. 
 в data положите файл .lock с паролем (например: 1488). 
-все фото (logo.png , like.png , dislike.png , subscribe.png ) положите в ресурсы. 
+все фото (logo.png , like.png , dislike.png , subscribe.png , account.png , OurSecurity.png ) положите в ресурсы. 
 НЕОБХОДИМ NODE JS , библиотека Tuna (можно скачать через Winget с официального сайта Tuna) и библиотеки npm install express multer и npm install node-media-server. 
 Далее создаём туннель на tuna.am и копируем команду для его запуска . 
 пишем в консоль tuna login , вставляем скопированную команду(если всё правильно запустится сервер Tuna) и запускаем start.bat . 
