@@ -1,10 +1,8 @@
 # NoTube. 
 NoTube is the OpenSourese video hosting. 
 
-To use NoTube go to link in description. 
-Sometimes we perform technical works and the site may be unavailable. 
 
-RU: Инструкция для копирования 
+RU: Инструкция для использования
 Создайте папки ресурсы, videos, media, data. 
 в data положите файл .lock с паролем (например: 1488). 
 все фото (logo.png , like.png , dislike.png , subscribe.png , account.png , OurSecurity.png , Comment.png ) положите в ресурсы. 
